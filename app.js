@@ -5,393 +5,295 @@ if (tg) {
     tg.expand();
 }
 
-const searchInput = document.getElementById("searchInput");
-const productGrid = document.getElementById("productGrid");
+const app = document.querySelector(".app");
+const header = document.querySelector(".header");
+const main = document.querySelector("main");
+const bottomNav = document.querySelector(".bottom-nav");
 
-const categoryCards = document.querySelectorAll(".category-card");
+let currentScreen = "home";
 
-const catalogButton = document.getElementById("catalogButton");
-const cartButton = document.getElementById("cartButton");
-const ordersButton = document.getElementById("ordersButton");
-const profileNavButton = document.getElementById("profileNavButton");
-const profileButton = document.getElementById("profileButton");
-
-const allCategoriesButton = document.getElementById("allCategories");
-const allProductsButton = document.getElementById("allProducts");
-
-const navItems = document.querySelectorAll(".nav-item");
-
-const telegramUser =
-    tg?.initDataUnsafe?.user || null;
-
-
-/* =========================
-   ВИБРАЦИЯ
-========================= */
-
-function haptic(type = "light") {
-    if (tg?.HapticFeedback) {
-        tg.HapticFeedback.impactOccurred(type);
+const accounts = [
+    {
+        game: "Brawl Stars",
+        title: "Brawl Stars — аккаунт с редкими скинами",
+        price: 799
+    },
+    {
+        game: "Brawl Stars",
+        title: "Brawl Stars — 35 000 кубков",
+        price: 599
+    },
+    {
+        game: "Brawl Stars",
+        title: "Brawl Stars — много легендарных бойцов",
+        price: 999
+    },
+    {
+        game: "Minecraft",
+        title: "Minecraft — Java Edition аккаунт",
+        price: 1299
+    },
+    {
+        game: "GTA 5",
+        title: "GTA 5 — игровой аккаунт",
+        price: 899
     }
-}
-
-
-/* =========================
-   НАВИГАЦИЯ
-========================= */
-
-function setActiveNav(button) {
-    navItems.forEach((item) => {
-        item.classList.remove("active");
-    });
-
-    if (button) {
-        button.classList.add("active");
-    }
-}
-
-
-/* =========================
-   ПОКАЗ ГЛАВНОЙ
-========================= */
+];
 
 function showHome() {
-    const profileScreen =
-        document.getElementById("profileScreen");
+    currentScreen = "home";
+
+    header.style.display = "";
+    main.style.display = "";
+    bottomNav.style.display = "";
+
+    const accountsScreen = document.getElementById("accountsScreen");
+    const profileScreen = document.getElementById("profileScreen");
+
+    if (accountsScreen) {
+        accountsScreen.remove();
+    }
 
     if (profileScreen) {
         profileScreen.remove();
     }
 
-    const header =
-        document.querySelector(".header");
-
-    const main =
-        document.querySelector("main");
-
-    const bottomNav =
-        document.querySelector(".bottom-nav");
-
-    if (header) {
-        header.style.display = "";
-    }
-
-    if (main) {
-        main.style.display = "";
-    }
-
-    if (bottomNav) {
-        bottomNav.style.display = "grid";
-    }
-
-    const welcomeTitle =
-        document.querySelector(".welcome h1");
-
-    const welcomeDescription =
-        document.querySelector(".welcome p");
-
-    const productsTitle =
-        document.querySelector(
-            ".products .section-header h2"
-        );
-
-    if (welcomeTitle) {
-        welcomeTitle.textContent =
-            "Что будем искать?";
-    }
-
-    if (welcomeDescription) {
-        welcomeDescription.textContent =
-            "Аккаунты, валюту, ключи и игровые предметы";
-    }
-
-    if (productsTitle) {
-        productsTitle.textContent =
-            "Популярное";
-    }
-
-    window.scrollTo({
-        top: 0,
-        behavior: "smooth"
-    });
+    window.scrollTo(0, 0);
 }
 
+function createAccountsScreen() {
+    const oldScreen = document.getElementById("accountsScreen");
 
-/* =========================
-   ОТКРЫТИЕ КАТЕГОРИИ
-========================= */
-
-const categories = {
-    accounts: {
-        title: "Игровые аккаунты",
-        description: "Аккаунты популярных игр"
-    },
-
-    currency: {
-        title: "Игровая валюта",
-        description: "Монеты, кристаллы и другая игровая валюта"
-    },
-
-    keys: {
-        title: "Игровые ключи",
-        description: "Ключи активации игр и дополнений"
-    },
-
-    items: {
-        title: "Игровые предметы",
-        description: "Скины, предметы и игровые наборы"
+    if (oldScreen) {
+        oldScreen.remove();
     }
-};
 
-function openCategory(categoryName) {
-    const category = categories[categoryName];
+    header.style.display = "none";
+    main.style.display = "none";
+    bottomNav.style.display = "none";
 
-    if (!category) {
+    const screen = document.createElement("section");
+
+    screen.id = "accountsScreen";
+    screen.className = "extra-screen";
+
+    screen.innerHTML = `
+        <div class="extra-header">
+            <button class="back-button" id="accountsBack">
+                ←
+            </button>
+
+            <div>
+                <div class="extra-title">Аккаунты</div>
+                <div class="extra-subtitle">Выберите игру</div>
+            </div>
+        </div>
+
+        <div class="accounts-search-box">
+            <input
+                type="text"
+                id="gameSearchInput"
+                placeholder="Введите название игры..."
+                autocomplete="off"
+            >
+
+            <button id="gameSearchButton">
+                Найти
+            </button>
+        </div>
+
+        <div class="accounts-hint">
+            Введите название игры, например:
+            <strong>Brawl Stars</strong>
+        </div>
+
+        <div id="accountsResults"></div>
+    `;
+
+    app.appendChild(screen);
+
+    document
+        .getElementById("accountsBack")
+        .addEventListener("click", showHome);
+
+    const input = document.getElementById("gameSearchInput");
+    const button = document.getElementById("gameSearchButton");
+
+    button.addEventListener("click", () => {
+        searchAccounts(input.value);
+    });
+
+    input.addEventListener("keydown", (event) => {
+        if (event.key === "Enter") {
+            searchAccounts(input.value);
+        }
+    });
+
+    input.focus();
+}
+
+function searchAccounts(query) {
+    const results = document.getElementById("accountsResults");
+
+    if (!results) {
         return;
     }
 
-    haptic("light");
+    const search = query.trim().toLowerCase();
 
-    setActiveNav(catalogButton);
+    if (!search) {
+        results.innerHTML = `
+            <div class="empty-state">
+                <div class="empty-title">
+                    Введите название игры
+                </div>
 
-    const welcomeTitle =
-        document.querySelector(".welcome h1");
-
-    const welcomeDescription =
-        document.querySelector(".welcome p");
-
-    const productsTitle =
-        document.querySelector(
-            ".products .section-header h2"
-        );
-
-    if (welcomeTitle) {
-        welcomeTitle.textContent =
-            category.title;
-    }
-
-    if (welcomeDescription) {
-        welcomeDescription.textContent =
-            category.description;
-    }
-
-    if (productsTitle) {
-        productsTitle.textContent =
-            category.title;
-    }
-
-    window.scrollTo({
-        top: 0,
-        behavior: "smooth"
-    });
-}
-
-
-/* =========================
-   КАТЕГОРИИ
-========================= */
-
-categoryCards.forEach((card, index) => {
-
-    const categoryNames = [
-        "accounts",
-        "currency",
-        "keys",
-        "items"
-    ];
-
-    card.addEventListener("click", () => {
-        openCategory(categoryNames[index]);
-    });
-
-});
-
-
-/* =========================
-   ПЕРЕХОД В ПРОФИЛЬ
-========================= */
-
-function openProfile() {
-
-    haptic("light");
-
-    setActiveNav(profileNavButton);
-
-    const oldProfile =
-        document.getElementById("profileScreen");
-
-    if (oldProfile) {
-        oldProfile.remove();
-    }
-
-    const header =
-        document.querySelector(".header");
-
-    const main =
-        document.querySelector("main");
-
-    const bottomNav =
-        document.querySelector(".bottom-nav");
-
-    if (header) {
-        header.style.display = "none";
-    }
-
-    if (main) {
-        main.style.display = "none";
-    }
-
-    if (bottomNav) {
-        bottomNav.style.display = "none";
-    }
-
-    const app =
-        document.querySelector(".app");
-
-    if (!app) {
-        return;
-    }
-
-    const firstName =
-        telegramUser?.first_name || "Пользователь";
-
-    const lastName =
-        telegramUser?.last_name || "";
-
-    const username =
-        telegramUser?.username
-            ? "@" + telegramUser.username
-            : "Telegram пользователь";
-
-    const avatar =
-        telegramUser?.photo_url || "";
-
-    const fullName =
-        `${firstName} ${lastName}`.trim();
-
-    const avatarHTML = avatar
-        ? `<img src="${avatar}" alt="Аватар пользователя">`
-        : `
-            <div class="profile-avatar-placeholder">
-                ${firstName
-                    .charAt(0)
-                    .toUpperCase()}
+                <div class="empty-text">
+                    Например: Brawl Stars, Minecraft или GTA 5
+                </div>
             </div>
         `;
 
+        return;
+    }
 
-    const profileScreen =
-        document.createElement("div");
+    const found = accounts.filter((account) =>
+        account.game.toLowerCase().includes(search)
+    );
 
-    profileScreen.id =
-        "profileScreen";
-
-    profileScreen.className =
-        "profile-screen";
-
-
-    profileScreen.innerHTML = `
-
-        <div class="profile-topbar">
-
-            <button
-                class="profile-back-button"
-                id="profileBackButton"
-                aria-label="Назад"
-            >
-                <svg viewBox="0 0 24 24">
-                    <path d="M19 12H5"></path>
-                    <path d="M12 19l-7-7 7-7"></path>
-                </svg>
-            </button>
-
-            <div class="profile-top-title">
-                Профиль
-            </div>
-
-            <button
-                class="profile-settings-button"
-                id="profileSettingsButton"
-                aria-label="Настройки"
-            >
-                <svg viewBox="0 0 24 24">
-                    <circle cx="12" cy="12" r="3"></circle>
-                    <path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1-1.7 1.7-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.5V20h-2.4v-.2a1.7 1.7 0 0 0-1-1.5 1.7 1.7 0 0 0-1.9.3l-.1.1L8 17l.1-.1A1.7 1.7 0 0 0 8.4 15a1.7 1.7 0 0 0-1.5-1H6v-2.4h.9a1.7 1.7 0 0 0 1.5-1A1.7 1.7 0 0 0 8.1 9L8 8.9l1.7-1.7.1.1a1.7 1.7 0 0 0 1.9.3 1.7 1.7 0 0 0 1-1.5V6h2.4v.2a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.9-.3l.1-.1L20 9l-.1.1a1.7 1.7 0 0 0-.3 1.9 1.7 1.7 0 0 0 1.5 1h.2v2.4h-.2a1.7 1.7 0 0 0-1.7.6z"></path>
-                </svg>
-            </button>
-
-        </div>
-
-
-        <section class="profile-hero">
-
-            <div class="profile-banner">
-
-                <div class="profile-banner-orb orb-one"></div>
-                <div class="profile-banner-orb orb-two"></div>
-                <div class="profile-banner-stars"></div>
-
-            </div>
-
-
-            <div class="profile-user">
-
-                <div class="profile-avatar">
-
-                    ${avatarHTML}
-
-                    <span class="profile-online"></span>
-
+    if (found.length === 0) {
+        results.innerHTML = `
+            <div class="empty-state">
+                <div class="empty-title">
+                    Ничего не найдено
                 </div>
 
+                <div class="empty-text">
+                    По игре «${escapeHtml(query)}» пока нет аккаунтов.
+                </div>
+            </div>
+        `;
 
-                <div class="profile-user-info">
+        return;
+    }
 
-                    <div class="profile-name-row">
+    results.innerHTML = `
+        <div class="results-title">
+            Найдено аккаунтов: ${found.length}
+        </div>
 
-                        <h1>
-                            ${fullName}
-                        </h1>
+        <div class="account-list">
+            ${found.map((account) => `
+                <article class="account-card">
 
-                        <span class="verified-badge">
-                            <svg viewBox="0 0 24 24">
-                                <path d="M20 7l-11 11-5-5"></path>
-                            </svg>
-                        </span>
+                    <div class="account-image">
+                        <img
+                            src="assets/game-account.svg"
+                            alt=""
+                            onerror="this.style.display='none'"
+                        >
+                    </div>
+
+                    <div class="account-info">
+
+                        <div class="account-game">
+                            ${escapeHtml(account.game)}
+                        </div>
+
+                        <h3>
+                            ${escapeHtml(account.title)}
+                        </h3>
+
+                        <div class="account-bottom">
+                            <strong>${account.price} ₽</strong>
+
+                            <button
+                                class="account-buy"
+                                data-title="${escapeHtml(account.title)}"
+                            >
+                                Купить
+                            </button>
+                        </div>
 
                     </div>
 
-                    <p class="profile-username">
-                        ${username}
-                    </p>
+                </article>
+            `).join("")}
+        </div>
+    `;
 
-                    <span class="profile-status">
-                        Игрок маркетплейса
-                    </span>
+    document.querySelectorAll(".account-buy").forEach((button) => {
+        button.addEventListener("click", () => {
+            const title = button.dataset.title;
 
-                </div>
+            if (tg?.showAlert) {
+                tg.showAlert(`Вы выбрали: ${title}`);
+            } else {
+                alert(`Вы выбрали: ${title}`);
+            }
+        });
+    });
+}
 
-            </div>
+function createProfileScreen() {
+    const oldScreen = document.getElementById("profileScreen");
 
+    if (oldScreen) {
+        oldScreen.remove();
+    }
 
-            <button
-                class="edit-profile-button"
-                id="editProfileButton"
-            >
+    header.style.display = "none";
+    main.style.display = "none";
+    bottomNav.style.display = "none";
 
-                <svg viewBox="0 0 24 24">
-                    <path d="M12 20h9"></path>
-                    <path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L8 18l-4 1 1-4z"></path>
-                </svg>
+    const user = tg?.initDataUnsafe?.user || {};
 
-                Редактировать
+    const firstName = user.first_name || "Пользователь";
+    const lastName = user.last_name || "";
+    const username = user.username
+        ? `@${user.username}`
+        : "username не указан";
 
+    const avatar = user.photo_url
+        ? `<img src="${user.photo_url}" alt="">`
+        : `<div class="avatar-letter">${firstName.charAt(0).toUpperCase()}</div>`;
+
+    const screen = document.createElement("section");
+
+    screen.id = "profileScreen";
+    screen.className = "extra-screen profile-screen";
+
+    screen.innerHTML = `
+        <div class="extra-header">
+
+            <button class="back-button" id="profileBack">
+                ←
             </button>
 
-        </section>
+            <div>
+                <div class="extra-title">Профиль</div>
+                <div class="extra-subtitle">Ваш аккаунт</div>
+            </div>
 
+        </div>
 
-        <section class="profile-stats">
+        <div class="profile-card">
+
+            <div class="profile-avatar">
+                ${avatar}
+            </div>
+
+            <div class="profile-name">
+                ${escapeHtml(firstName)} ${escapeHtml(lastName)}
+            </div>
+
+            <div class="profile-username">
+                ${escapeHtml(username)}
+            </div>
+
+        </div>
+
+        <div class="profile-stats">
 
             <div class="profile-stat">
                 <strong>0</strong>
@@ -400,724 +302,199 @@ function openProfile() {
 
             <div class="profile-stat">
                 <strong>0</strong>
-                <span>Заказов</span>
-            </div>
-
-            <div class="profile-stat">
-                <strong>0</strong>
                 <span>Избранное</span>
             </div>
 
-        </section>
-
-
-        <section class="profile-tabs">
-
-            <button
-                class="profile-tab active"
-                data-tab="profile"
-            >
-                Профиль
-            </button>
-
-            <button
-                class="profile-tab"
-                data-tab="purchases"
-            >
-                Покупки
-            </button>
-
-            <button
-                class="profile-tab"
-                data-tab="favorites"
-            >
-                Избранное
-            </button>
-
-        </section>
-
-
-        <section
-            class="profile-content"
-            id="profileContent"
-        >
-
-            <div class="profile-card">
-
-                <div class="profile-card-title">
-                    О себе
-                </div>
-
-                <p class="profile-about">
-                    Добро пожаловать в Game Market!
-                    Здесь будет отображаться информация
-                    о вашем профиле.
-                </p>
-
-
-                <div class="profile-tags">
-
-                    <span>Игры</span>
-                    <span>Покупки</span>
-                    <span>Избранное</span>
-
-                </div>
-
+            <div class="profile-stat">
+                <strong>0 ₽</strong>
+                <span>Потрачено</span>
             </div>
 
+        </div>
 
-            <div class="profile-card">
+        <div class="profile-section">
 
-                <div class="profile-card-title">
-                    Последняя активность
-                </div>
-
-
-                <div class="activity-empty">
-
-                    <div class="activity-empty-icon">
-
-                        <svg viewBox="0 0 24 24">
-                            <circle cx="12" cy="12" r="9"></circle>
-                            <path d="M12 7v5l3 2"></path>
-                        </svg>
-
-                    </div>
-
-                    <div>
-
-                        <strong>
-                            Пока здесь пусто
-                        </strong>
-
-                        <p>
-                            Активность появится после
-                            первых действий в магазине.
-                        </p>
-
-                    </div>
-
-                </div>
-
+            <div class="profile-section-title">
+                Аккаунт
             </div>
 
+            <button class="profile-row">
+                <span>Покупки</span>
+                <span>›</span>
+            </button>
 
-            <div class="profile-card">
+            <button class="profile-row">
+                <span>Избранное</span>
+                <span>›</span>
+            </button>
 
-                <div class="profile-card-title">
-                    Настройки
-                </div>
+            <button class="profile-row">
+                <span>Поддержка</span>
+                <span>›</span>
+            </button>
 
-
-                <button
-                    class="profile-setting-row"
-                    data-setting="notifications"
-                >
-
-                    <span class="setting-icon">
-
-                        <svg viewBox="0 0 24 24">
-                            <path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"></path>
-                            <path d="M10 21h4"></path>
-                        </svg>
-
-                    </span>
-
-                    <span class="setting-text">
-
-                        <strong>
-                            Уведомления
-                        </strong>
-
-                        <small>
-                            Настройка уведомлений
-                        </small>
-
-                    </span>
-
-                    <span class="setting-arrow">
-                        ›
-                    </span>
-
-                </button>
-
-
-                <button
-                    class="profile-setting-row"
-                    data-setting="language"
-                >
-
-                    <span class="setting-icon">
-
-                        <svg viewBox="0 0 24 24">
-                            <circle cx="12" cy="12" r="9"></circle>
-                            <path d="M3 12h18"></path>
-                            <path d="M12 3a14 14 0 0 1 0 18"></path>
-                            <path d="M12 3a14 14 0 0 0 0 18"></path>
-                        </svg>
-
-                    </span>
-
-                    <span class="setting-text">
-
-                        <strong>
-                            Язык
-                        </strong>
-
-                        <small>
-                            Русский
-                        </small>
-
-                    </span>
-
-                    <span class="setting-arrow">
-                        ›
-                    </span>
-
-                </button>
-
-
-                <button
-                    class="profile-setting-row"
-                    data-setting="help"
-                >
-
-                    <span class="setting-icon">
-
-                        <svg viewBox="0 0 24 24">
-                            <circle cx="12" cy="12" r="9"></circle>
-                            <path d="M9.5 9a2.5 2.5 0 1 1 4.4 1.6c-.9.9-1.9 1.2-1.9 2.4"></path>
-                            <path d="M12 17h.01"></path>
-                        </svg>
-
-                    </span>
-
-                    <span class="setting-text">
-
-                        <strong>
-                            Помощь
-                        </strong>
-
-                        <small>
-                            Поддержка пользователей
-                        </small>
-
-                    </span>
-
-                    <span class="setting-arrow">
-                        ›
-                    </span>
-
-                </button>
-
-            </div>
-
-        </section>
-
+        </div>
     `;
 
-
-    app.appendChild(profileScreen);
-
-
-    /* =========================
-       НАЗАД
-    ========================= */
+    app.appendChild(screen);
 
     document
-        .getElementById("profileBackButton")
-        .addEventListener("click", () => {
+        .getElementById("profileBack")
+        .addEventListener("click", showHome);
 
-            haptic("light");
+    window.scrollTo(0, 0);
+}
 
-            showHome();
+function escapeHtml(text) {
+    return String(text)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+}
 
-            setActiveNav(
-                document.querySelector(".nav-item.active")
-            );
+/* Категории */
 
-        });
+const categoryCards = document.querySelectorAll(".category-card");
 
+categoryCards.forEach((card, index) => {
+    card.addEventListener("click", () => {
 
-    /* =========================
-       НАСТРОЙКИ
-    ========================= */
+        if (index === 0) {
+            createAccountsScreen();
+        } else {
+            const names = [
+                "Аккаунты",
+                "Валюта",
+                "Ключи",
+                "Предметы"
+            ];
 
-    document
-        .getElementById("profileSettingsButton")
-        .addEventListener("click", () => {
+            const name = names[index];
 
-            haptic("light");
-
-            alert(
-                "Настройки\n\n" +
-                "Здесь будут дополнительные настройки аккаунта."
-            );
-
-        });
-
-
-    /* =========================
-       РЕДАКТИРОВАНИЕ
-    ========================= */
-
-    document
-        .getElementById("editProfileButton")
-        .addEventListener("click", () => {
-
-            haptic("light");
-
-            alert(
-                "Редактирование профиля\n\n" +
-                "Позже здесь можно будет изменить информацию профиля."
-            );
-
-        });
-
-
-    /* =========================
-       ВКЛАДКИ
-    ========================= */
-
-    const tabs =
-        profileScreen.querySelectorAll(".profile-tab");
-
-    const content =
-        profileScreen.querySelector("#profileContent");
-
-
-    tabs.forEach((tab) => {
-
-        tab.addEventListener("click", () => {
-
-            haptic("light");
-
-            tabs.forEach((item) => {
-                item.classList.remove("active");
-            });
-
-            tab.classList.add("active");
-
-            const type =
-                tab.dataset.tab;
-
-
-            if (type === "profile") {
-
-                content.innerHTML = `
-
-                    <div class="profile-card">
-
-                        <div class="profile-card-title">
-                            О себе
-                        </div>
-
-                        <p class="profile-about">
-                            Добро пожаловать в Game Market!
-                            Здесь будет отображаться информация
-                            о вашем профиле.
-                        </p>
-
-                        <div class="profile-tags">
-                            <span>Игры</span>
-                            <span>Покупки</span>
-                            <span>Избранное</span>
-                        </div>
-
-                    </div>
-
-                    <div class="profile-card">
-
-                        <div class="profile-card-title">
-                            Последняя активность
-                        </div>
-
-                        <div class="activity-empty">
-
-                            <div class="activity-empty-icon">
-
-                                <svg viewBox="0 0 24 24">
-                                    <circle cx="12" cy="12" r="9"></circle>
-                                    <path d="M12 7v5l3 2"></path>
-                                </svg>
-
-                            </div>
-
-                            <div>
-
-                                <strong>
-                                    Пока здесь пусто
-                                </strong>
-
-                                <p>
-                                    Активность появится после
-                                    первых действий в магазине.
-                                </p>
-
-                            </div>
-
-                        </div>
-
-                    </div>
-
-                    <div class="profile-card">
-
-                        <div class="profile-card-title">
-                            Настройки
-                        </div>
-
-                        <button class="profile-setting-row">
-
-                            <span class="setting-icon">
-                                ⚙
-                            </span>
-
-                            <span class="setting-text">
-
-                                <strong>
-                                    Настройки аккаунта
-                                </strong>
-
-                                <small>
-                                    Управление профилем
-                                </small>
-
-                            </span>
-
-                            <span class="setting-arrow">
-                                ›
-                            </span>
-
-                        </button>
-
-                    </div>
-
-                `;
-
-                return;
+            if (tg?.showAlert) {
+                tg.showAlert(
+                    `${name}\n\nЭта категория пока находится в разработке.`
+                );
+            } else {
+                alert(
+                    `${name}\n\nЭта категория пока находится в разработке.`
+                );
             }
-
-
-            if (type === "purchases") {
-
-                content.innerHTML = `
-
-                    <div class="profile-card empty-page">
-
-                        <div class="empty-page-icon">
-
-                            <svg viewBox="0 0 24 24">
-                                <path d="M6 3h12l2 4H4z"></path>
-                                <path d="M5 7h14v13H5z"></path>
-                                <path d="M9 11h6"></path>
-                            </svg>
-
-                        </div>
-
-                        <h2>
-                            Покупок пока нет
-                        </h2>
-
-                        <p>
-                            Здесь появятся товары,
-                            которые вы купите в магазине.
-                        </p>
-
-                    </div>
-
-                `;
-
-                return;
-            }
-
-
-            if (type === "favorites") {
-
-                content.innerHTML = `
-
-                    <div class="profile-card empty-page">
-
-                        <div class="empty-page-icon">
-
-                            <svg viewBox="0 0 24 24">
-                                <path d="M20.8 8.7c0 5.5-8.8 10.3-8.8 10.3S3.2 14.2 3.2 8.7A4.7 4.7 0 0 1 12 6.4a4.7 4.7 0 0 1 8.8 2.3z"></path>
-                            </svg>
-
-                        </div>
-
-                        <h2>
-                            Избранное пусто
-                        </h2>
-
-                        <p>
-                            Добавляйте понравившиеся
-                            товары в избранное.
-                        </p>
-
-                    </div>
-
-                `;
-
-            }
-
-        });
-
+        }
     });
+});
 
+/* Профиль сверху */
 
-    /* =========================
-       НАСТРОЙКИ
-    ========================= */
+const profileButton = document.getElementById("profileButton");
 
-    profileScreen
-        .querySelectorAll(".profile-setting-row")
-        .forEach((row) => {
+if (profileButton) {
+    profileButton.addEventListener("click", createProfileScreen);
+}
 
-            row.addEventListener("click", () => {
+/* Профиль снизу */
 
-                haptic("light");
+const profileNavButton = document.getElementById("profileNavButton");
 
-                const setting =
-                    row.dataset.setting;
+if (profileNavButton) {
+    profileNavButton.addEventListener("click", createProfileScreen);
+}
 
-                if (setting === "notifications") {
-                    alert(
-                        "Уведомления\n\n" +
-                        "Здесь будут настройки уведомлений."
-                    );
-                }
+/* Главная */
 
-                if (setting === "language") {
-                    alert(
-                        "Язык\n\n" +
-                        "Сейчас выбран русский язык."
-                    );
-                }
+const homeButton = document.querySelector(".bottom-nav .nav-item");
 
-                if (setting === "help") {
-                    alert(
-                        "Помощь\n\n" +
-                        "Здесь будет служба поддержки."
-                    );
-                }
+if (homeButton) {
+    homeButton.addEventListener("click", showHome);
+}
 
-            });
+/* Каталог */
 
-        });
+const catalogButton = document.getElementById("catalogButton");
 
-
-    window.scrollTo({
-        top: 0,
-        behavior: "smooth"
+if (catalogButton) {
+    catalogButton.addEventListener("click", () => {
+        createAccountsScreen();
     });
 }
 
+/* Покупки */
 
-/* =========================
-   ПРОФИЛЬ
-========================= */
+const ordersButton = document.getElementById("ordersButton");
 
-profileButton.addEventListener(
-    "click",
-    openProfile
-);
+if (ordersButton) {
+    ordersButton.addEventListener("click", () => {
 
-profileNavButton.addEventListener(
-    "click",
-    openProfile
-);
+        if (tg?.showAlert) {
+            tg.showAlert("Покупок пока нет.");
+        } else {
+            alert("Покупок пока нет.");
+        }
+    });
+}
 
+/* Корзина */
 
-/* =========================
-   КАТАЛОГ
-========================= */
+const cartButton = document.getElementById("cartButton");
 
-catalogButton.addEventListener(
-    "click",
-    () => {
+if (cartButton) {
+    cartButton.addEventListener("click", () => {
 
-        haptic("light");
+        if (tg?.showAlert) {
+            tg.showAlert("Корзина пока пустая.");
+        } else {
+            alert("Корзина пока пустая.");
+        }
+    });
+}
 
-        setActiveNav(catalogButton);
+/* Поиск на главной */
 
-        document
-            .querySelector(".categories")
-            ?.scrollIntoView({
-                behavior: "smooth",
-                block: "start"
-            });
+const searchInput = document.getElementById("searchInput");
 
-    }
-);
+if (searchInput) {
+    searchInput.addEventListener("input", () => {
 
+        const query = searchInput.value.trim().toLowerCase();
 
-/* =========================
-   КОРЗИНА
-========================= */
+        document.querySelectorAll(".product-card").forEach((card) => {
 
-cartButton.addEventListener(
-    "click",
-    () => {
+            const text = card.innerText.toLowerCase();
 
-        haptic("light");
-
-        setActiveNav(cartButton);
-
-        alert(
-            "Корзина\n\n" +
-            "Пока корзина пустая."
-        );
-
-    }
-);
-
-
-/* =========================
-   ПОКУПКИ
-========================= */
-
-ordersButton.addEventListener(
-    "click",
-    () => {
-
-        haptic("light");
-
-        setActiveNav(ordersButton);
-
-        alert(
-            "Мои покупки\n\n" +
-            "У вас пока нет покупок."
-        );
-
-    }
-);
-
-
-/* =========================
-   ПОИСК
-========================= */
-
-searchInput.addEventListener(
-    "input",
-    () => {
-
-        const query =
-            searchInput.value
-                .toLowerCase()
-                .trim();
-
-        const products =
-            productGrid.querySelectorAll(
-                ".product-card"
-            );
-
-        products.forEach((product) => {
-
-            const text =
-                product.innerText
-                    .toLowerCase();
-
-            product.style.display =
-                text.includes(query)
-                    ? ""
-                    : "none";
+            if (text.includes(query)) {
+                card.style.display = "";
+            } else {
+                card.style.display = "none";
+            }
 
         });
-
-    }
-);
-
-
-/* =========================
-   КУПИТЬ
-========================= */
-
-document
-    .querySelectorAll(".buy-button")
-    .forEach((button) => {
-
-        button.addEventListener(
-            "click",
-            () => {
-
-                haptic("medium");
-
-                alert(
-                    "Товар добавлен в корзину!"
-                );
-
-            }
-        );
-
     });
+}
 
+/* Все категории */
 
-/* =========================
-   ВСЕ КАТЕГОРИИ
-========================= */
+const allCategories = document.getElementById("allCategories");
 
-allCategoriesButton.addEventListener(
-    "click",
-    () => {
+if (allCategories) {
+    allCategories.addEventListener("click", () => {
+        createAccountsScreen();
+    });
+}
 
-        haptic("light");
+/* Все товары */
 
-        setActiveNav(catalogButton);
+const allProducts = document.getElementById("allProducts");
 
-        document
-            .querySelector(".categories")
-            ?.scrollIntoView({
-                behavior: "smooth",
-                block: "start"
-            });
-
-    }
-);
-
-
-/* =========================
-   ВСЕ ТОВАРЫ
-========================= */
-
-allProductsButton.addEventListener(
-    "click",
-    () => {
-
-        haptic("light");
-
-        setActiveNav(catalogButton);
+if (allProducts) {
+    allProducts.addEventListener("click", () => {
 
         document
             .querySelector(".products")
             ?.scrollIntoView({
-                behavior: "smooth",
-                block: "start"
+                behavior: "smooth"
             });
 
-    }
-);
-
-
-/* =========================
-   ГЛАВНАЯ
-========================= */
-
-const homeButton =
-    document.querySelector(".nav-item.active");
-
-if (homeButton) {
-
-    homeButton.addEventListener(
-        "click",
-        () => {
-
-            haptic("light");
-
-            setActiveNav(homeButton);
-
-            showHome();
-
-        }
-    );
-
+    });
 }
