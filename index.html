@@ -2,6 +2,7 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
+
     <meta
         name="viewport"
         content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
@@ -10,6 +11,7 @@
     <title>Game Market</title>
 
     <link rel="stylesheet" href="style.css">
+
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
 </head>
 
@@ -18,79 +20,142 @@
 <div class="app">
 
     <header class="header">
+
         <div>
-            <div class="logo">GAME<span>MARKET</span></div>
-            <div class="subtitle">Игровой маркетплейс</div>
+            <div class="logo">
+                GAME<span>MARKET</span>
+            </div>
+
+            <div class="subtitle">
+                Игровой маркетплейс
+            </div>
         </div>
 
-        <button class="profile-button" id="profileButton">
+        <button
+            class="profile-button"
+            id="profileButton"
+        >
             👤
         </button>
+
     </header>
+
 
     <main>
 
         <section class="welcome">
-            <h1>Что будем искать?</h1>
-            <p>Аккаунты, валюту, ключи и игровые предметы</p>
+
+            <h1>
+                Что будем искать?
+            </h1>
+
+            <p>
+                Аккаунты, валюту, ключи и игровые предметы
+            </p>
+
         </section>
 
+
         <div class="search">
-            <span>🔎</span>
+
+            <span>
+                🔎
+            </span>
 
             <input
                 type="text"
                 id="searchInput"
                 placeholder="Поиск товара..."
             >
+
         </div>
+
 
         <section class="categories">
 
             <div class="section-header">
-                <h2>Категории</h2>
-                <button id="allCategories">Все</button>
+
+                <h2>
+                    Категории
+                </h2>
+
+                <button id="allCategories">
+                    Все
+                </button>
+
             </div>
+
 
             <div class="category-grid">
 
                 <button class="category-card">
 
                     <div class="category-icon">
-                        <img src="assets/accounts.svg" alt="Аккаунты">
+
+                        <img
+                            src="assets/accounts.svg"
+                            alt="Аккаунты"
+                        >
+
                     </div>
 
-                    <span>Аккаунты</span>
+                    <span>
+                        Аккаунты
+                    </span>
 
                 </button>
+
 
                 <button class="category-card">
 
                     <div class="category-icon">
-                        <img src="assets/currency.svg" alt="Валюта">
+
+                        <img
+                            src="assets/currency.svg"
+                            alt="Валюта"
+                        >
+
                     </div>
 
-                    <span>Валюта</span>
+                    <span>
+                        Валюта
+                    </span>
 
                 </button>
+
 
                 <button class="category-card">
 
                     <div class="category-icon">
-                        <img src="assets/key.svg" alt="Ключи">
+
+                        <img
+                            src="assets/key.svg"
+                            alt="Ключи"
+                        >
+
                     </div>
 
-                    <span>Ключи</span>
+                    <span>
+                        Ключи
+                    </span>
 
                 </button>
+
 
                 <button class="category-card">
 
                     <div class="category-icon">
-                        <img src="assets/items.svg" alt="Предметы">
+
+                        <img
+                            src="assets/items.svg"
+                            alt="Предметы"
+                        >
+
                     </div>
 
-                    <span>Предметы</span>
+                    <span>
+                        Предметы
+                    </span>
 
                 </button>
 
@@ -98,14 +163,26 @@
 
         </section>
 
+
         <section class="products">
 
             <div class="section-header">
-                <h2>Популярное</h2>
-                <button id="allProducts">Все товары</button>
+
+                <h2>
+                    Популярное
+                </h2>
+
+                <button id="allProducts">
+                    Все товары
+                </button>
+
             </div>
 
-            <div class="product-grid" id="productGrid">
+
+            <div
+                class="product-grid"
+                id="productGrid"
+            >
 
                 <article class="product-card">
 
@@ -119,19 +196,26 @@
                             ИГРОВОЙ АККАУНТ
                         </div>
 
-                        <h3>Premium аккаунт</h3>
+                        <h3>
+                            Premium аккаунт
+                        </h3>
 
                         <div class="product-bottom">
-                            <strong>499 ₽</strong>
+
+                            <strong>
+                                499 ₽
+                            </strong>
 
                             <button class="buy-button">
                                 Купить
                             </button>
+
                         </div>
 
                     </div>
 
                 </article>
+
 
                 <article class="product-card">
 
@@ -145,19 +229,26 @@
                             ИГРОВАЯ ВАЛЮТА
                         </div>
 
-                        <h3>1000 игровых монет</h3>
+                        <h3>
+                            1000 игровых монет
+                        </h3>
 
                         <div class="product-bottom">
-                            <strong>199 ₽</strong>
+
+                            <strong>
+                                199 ₽
+                            </strong>
 
                             <button class="buy-button">
                                 Купить
                             </button>
+
                         </div>
 
                     </div>
 
                 </article>
+
 
                 <article class="product-card">
 
@@ -171,19 +262,26 @@
                             КЛЮЧ
                         </div>
 
-                        <h3>Game Key</h3>
+                        <h3>
+                            Game Key
+                        </h3>
 
                         <div class="product-bottom">
-                            <strong>799 ₽</strong>
+
+                            <strong>
+                                799 ₽
+                            </strong>
 
                             <button class="buy-button">
                                 Купить
                             </button>
+
                         </div>
 
                     </div>
 
                 </article>
+
 
                 <article class="product-card">
 
@@ -197,14 +295,20 @@
                             ПРЕДМЕТ
                         </div>
 
-                        <h3>Редкий предмет</h3>
+                        <h3>
+                            Редкий предмет
+                        </h3>
 
                         <div class="product-bottom">
-                            <strong>299 ₽</strong>
+
+                            <strong>
+                                299 ₽
+                            </strong>
 
                             <button class="buy-button">
                                 Купить
                             </button>
+
                         </div>
 
                     </div>
@@ -217,36 +321,92 @@
 
     </main>
 
+
     <nav class="bottom-nav">
 
-        <button class="nav-item active">
-            <span>⌂</span>
-            <small>Главная</small>
+        <button
+            class="nav-item active"
+            id="homeNavButton"
+        >
+
+            <span>
+                ⌂
+            </span>
+
+            <small>
+                Главная
+            </small>
+
         </button>
 
-        <button class="nav-item" id="catalogButton">
-            <span>▦</span>
-            <small>Каталог</small>
+
+        <button
+            class="nav-item"
+            id="catalogButton"
+        >
+
+            <span>
+                ▦
+            </span>
+
+            <small>
+                Каталог
+            </small>
+
         </button>
 
-        <button class="nav-item" id="cartButton">
-            <span>🛒</span>
-            <small>Корзина</small>
+
+        <button
+            class="nav-item"
+            id="cartButton"
+        >
+
+            <span>
+                🛒
+            </span>
+
+            <small>
+                Корзина
+            </small>
+
         </button>
 
-        <button class="nav-item" id="ordersButton">
-            <span>📦</span>
-            <small>Покупки</small>
+
+        <button
+            class="nav-item"
+            id="ordersButton"
+        >
+
+            <span>
+                📦
+            </span>
+
+            <small>
+                Покупки
+            </small>
+
         </button>
 
-        <button class="nav-item" id="profileNavButton">
-            <span>👤</span>
-            <small>Профиль</small>
+
+        <button
+            class="nav-item"
+            id="profileNavButton"
+        >
+
+            <span>
+                👤
+            </span>
+
+            <small>
+                Профиль
+            </small>
+
         </button>
 
     </nav>
 
 </div>
+
 
 <script src="app.js"></script>
 
