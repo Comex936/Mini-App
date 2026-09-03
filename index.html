@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    >
+
+    <title>Game Market</title>
+
+    <link rel="stylesheet" href="style.css">
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+</head>
+
+<body>
+
+<div class="app">
+
+    <header class="header">
+        <div>
+            <div class="logo">GAME<span>MARKET</span></div>
+            <div class="subtitle">Игровой маркетплейс</div>
+        </div>
+
+        <button class="profile-button" id="profileButton">
+            👤
+        </button>
+    </header>
+
+
+    <main>
+
+        <section class="welcome">
+            <h1>Что будем искать?</h1>
+            <p>Аккаунты, валюту, ключи и игровые предметы</p>
+        </section>
+
+
+        <div class="search">
+            <span>🔎</span>
+            <input
+                type="text"
+                id="searchInput"
+                placeholder="Поиск товара..."
+            >
+        </div>
+
+
+        <section class="categories">
+
+            <div class="section-header">
+                <h2>Категории</h2>
+                <button id="allCategories">Все</button>
+            </div>
+
+            <div class="category-grid">
+
+                <button class="category-card">
+                    <div class="category-icon">🎮</div>
+                    <span>Аккаунты</span>
+                </button>
+
+                <button class="category-card">
+                    <div class="category-icon">💰</div>
+                    <span>Валюта</span>
+                </button>
+
+                <button class="category-card">
+                    <div class="category-icon">🔑</div>
+                    <span>Ключи</span>
+                </button>
+
+                <button class="category-card">
+                    <div class="category-icon">🎁</div>
+                    <span>Предметы</span>
+                </button>
+
+            </div>
+
+        </section>
+
+
+        <section class="products">
+
+            <div class="section-header">
+                <h2>Популярное</h2>
+                <button id="allProducts">Все товары</button>
+            </div>
+
+            <div class="product-grid" id="productGrid">
+
+                <article class="product-card">
+
+                    <div class="product-image">
+                        🎮
+                    </div>
+
+                    <div class="product-info">
+
+                        <div class="product-category">
+                            ИГРОВОЙ АККАУНТ
+                        </div>
+
+                        <h3>Premium аккаунт</h3>
+
+                        <div class="product-bottom">
+                            <strong>499 ₽</strong>
+                            <button class="buy-button">
+                                Купить
+                            </button>
+                        </div>
+
+                    </div>
+
+                </article>
+
+
+                <article class="product-card">
+
+                    <div class="product-image">
+                        💰
+                    </div>
+
+                    <div class="product-info">
+
+                        <div class="product-category">
+                            ИГРОВАЯ ВАЛЮТА
+                        </div>
+
+                        <h3>1000 игровых монет</h3>
+
+                        <div class="product-bottom">
+                            <strong>199 ₽</strong>
+                            <button class="buy-button">
+                                Купить
+                            </button>
+                        </div>
+
+                    </div>
+
+                </article>
+
+
+                <article class="product-card">
+
+                    <div class="product-image">
+                        🔑
+                    </div>
+
+                    <div class="product-info">
+
+                        <div class="product-category">
+                            КЛЮЧ
+                        </div>
+
+                        <h3>Game Key</h3>
+
+                        <div class="product-bottom">
+                            <strong>799 ₽</strong>
+                            <button class="buy-button">
+                                Купить
+                            </button>
+                        </div>
+
+                    </div>
+
+                </article>
+
+
+                <article class="product-card">
+
+                    <div class="product-image">
+                        🎁
+                    </div>
+
+                    <div class="product-info">
+
+                        <div class="product-category">
+                            ПРЕДМЕТ
+                        </div>
+
+                        <h3>Редкий предмет</h3>
+
+                        <div class="product-bottom">
+                            <strong>299 ₽</strong>
+                            <button class="buy-button">
+                                Купить
+                            </button>
+                        </div>
+
+                    </div>
+
+                </article>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <nav class="bottom-nav">
+
+        <button class="nav-item active">
+            <span>⌂</span>
+            <small>Главная</small>
+        </button>
+
+        <button class="nav-item" id="catalogButton">
+            <span>▦</span>
+            <small>Каталог</small>
+        </button>
+
+        <button class="nav-item" id="cartButton">
+            <span>🛒</span>
+            <small>Корзина</small>
+        </button>
+
+        <button class="nav-item" id="ordersButton">
+            <span>📦</span>
+            <small>Покупки</small>
+        </button>
+
+        <button class="nav-item" id="profileNavButton">
+            <span>👤</span>
+            <small>Профиль</small>
+        </button>
+
+    </nav>
+
+</div>
+
+<script src="app.js"></script>
+
+</body>
+</html>
