@@ -16,57 +16,20 @@ const ordersButton = document.getElementById("ordersButton");
 const profileNavButton = document.getElementById("profileNavButton");
 const profileButton = document.getElementById("profileButton");
 
-const allCategoriesButton =
-    document.getElementById("allCategories");
+const allCategoriesButton = document.getElementById("allCategories");
+const allProductsButton = document.getElementById("allProducts");
 
-const allProductsButton =
-    document.getElementById("allProducts");
-
-const navItems =
-    document.querySelectorAll(".nav-item");
-
-
-/* =========================
-   TELEGRAM USER
-========================= */
+const navItems = document.querySelectorAll(".nav-item");
 
 const telegramUser =
     tg?.initDataUnsafe?.user || null;
 
 
 /* =========================
-   КАТЕГОРИИ
-========================= */
-
-const categories = {
-    accounts: {
-        title: "Игровые аккаунты",
-        description: "Аккаунты популярных игр"
-    },
-
-    currency: {
-        title: "Игровая валюта",
-        description: "Монеты, кристаллы и другая игровая валюта"
-    },
-
-    keys: {
-        title: "Игровые ключи",
-        description: "Ключи активации игр и дополнений"
-    },
-
-    items: {
-        title: "Игровые предметы",
-        description: "Скины, предметы и игровые наборы"
-    }
-};
-
-
-/* =========================
-   HAPTIC
+   ВИБРАЦИЯ
 ========================= */
 
 function haptic(type = "light") {
-
     if (tg?.HapticFeedback) {
         tg.HapticFeedback.impactOccurred(type);
     }
@@ -74,11 +37,10 @@ function haptic(type = "light") {
 
 
 /* =========================
-   NAVIGATION
+   НАВИГАЦИЯ
 ========================= */
 
 function setActiveNav(button) {
-
     navItems.forEach((item) => {
         item.classList.remove("active");
     });
@@ -90,12 +52,37 @@ function setActiveNav(button) {
 
 
 /* =========================
-   HOME
+   ПОКАЗ ГЛАВНОЙ
 ========================= */
 
 function showHome() {
+    const profileScreen =
+        document.getElementById("profileScreen");
 
-    haptic("light");
+    if (profileScreen) {
+        profileScreen.remove();
+    }
+
+    const header =
+        document.querySelector(".header");
+
+    const main =
+        document.querySelector("main");
+
+    const bottomNav =
+        document.querySelector(".bottom-nav");
+
+    if (header) {
+        header.style.display = "";
+    }
+
+    if (main) {
+        main.style.display = "";
+    }
+
+    if (bottomNav) {
+        bottomNav.style.display = "grid";
+    }
 
     const welcomeTitle =
         document.querySelector(".welcome h1");
@@ -104,7 +91,9 @@ function showHome() {
         document.querySelector(".welcome p");
 
     const productsTitle =
-        document.querySelector(".products .section-header h2");
+        document.querySelector(
+            ".products .section-header h2"
+        );
 
     if (welcomeTitle) {
         welcomeTitle.textContent =
@@ -129,19 +118,39 @@ function showHome() {
 
 
 /* =========================
-   CATEGORY
+   ОТКРЫТИЕ КАТЕГОРИИ
 ========================= */
 
-function openCategory(categoryName) {
+const categories = {
+    accounts: {
+        title: "Игровые аккаунты",
+        description: "Аккаунты популярных игр"
+    },
 
-    const category =
-        categories[categoryName];
+    currency: {
+        title: "Игровая валюта",
+        description: "Монеты, кристаллы и другая игровая валюта"
+    },
+
+    keys: {
+        title: "Игровые ключи",
+        description: "Ключи активации игр и дополнений"
+    },
+
+    items: {
+        title: "Игровые предметы",
+        description: "Скины, предметы и игровые наборы"
+    }
+};
+
+function openCategory(categoryName) {
+    const category = categories[categoryName];
 
     if (!category) {
         return;
     }
 
-    haptic("medium");
+    haptic("light");
 
     setActiveNav(catalogButton);
 
@@ -179,31 +188,27 @@ function openCategory(categoryName) {
 
 
 /* =========================
-   CATEGORY BUTTONS
+   КАТЕГОРИИ
 ========================= */
 
 categoryCards.forEach((card, index) => {
 
+    const categoryNames = [
+        "accounts",
+        "currency",
+        "keys",
+        "items"
+    ];
+
     card.addEventListener("click", () => {
-
-        const categoryNames = [
-            "accounts",
-            "currency",
-            "keys",
-            "items"
-        ];
-
-        openCategory(
-            categoryNames[index]
-        );
-
+        openCategory(categoryNames[index]);
     });
 
 });
 
 
 /* =========================
-   PROFILE SCREEN
+   ПЕРЕХОД В ПРОФИЛЬ
 ========================= */
 
 function openProfile() {
@@ -212,17 +217,39 @@ function openProfile() {
 
     setActiveNav(profileNavButton);
 
-    const app = document.querySelector(".app");
-
-    if (!app) {
-        return;
-    }
-
     const oldProfile =
         document.getElementById("profileScreen");
 
     if (oldProfile) {
         oldProfile.remove();
+    }
+
+    const header =
+        document.querySelector(".header");
+
+    const main =
+        document.querySelector("main");
+
+    const bottomNav =
+        document.querySelector(".bottom-nav");
+
+    if (header) {
+        header.style.display = "none";
+    }
+
+    if (main) {
+        main.style.display = "none";
+    }
+
+    if (bottomNav) {
+        bottomNav.style.display = "none";
+    }
+
+    const app =
+        document.querySelector(".app");
+
+    if (!app) {
+        return;
     }
 
     const firstName =
@@ -243,10 +270,15 @@ function openProfile() {
         `${firstName} ${lastName}`.trim();
 
     const avatarHTML = avatar
-        ? `<img src="${avatar}" alt="Аватар">`
-        : `<div class="profile-avatar-placeholder">
-                ${firstName.charAt(0).toUpperCase()}
-           </div>`;
+        ? `<img src="${avatar}" alt="Аватар пользователя">`
+        : `
+            <div class="profile-avatar-placeholder">
+                ${firstName
+                    .charAt(0)
+                    .toUpperCase()}
+            </div>
+        `;
+
 
     const profileScreen =
         document.createElement("div");
@@ -257,6 +289,7 @@ function openProfile() {
     profileScreen.className =
         "profile-screen";
 
+
     profileScreen.innerHTML = `
 
         <div class="profile-topbar">
@@ -264,8 +297,12 @@ function openProfile() {
             <button
                 class="profile-back-button"
                 id="profileBackButton"
+                aria-label="Назад"
             >
-                ←
+                <svg viewBox="0 0 24 24">
+                    <path d="M19 12H5"></path>
+                    <path d="M12 19l-7-7 7-7"></path>
+                </svg>
             </button>
 
             <div class="profile-top-title">
@@ -275,8 +312,12 @@ function openProfile() {
             <button
                 class="profile-settings-button"
                 id="profileSettingsButton"
+                aria-label="Настройки"
             >
-                ⚙
+                <svg viewBox="0 0 24 24">
+                    <circle cx="12" cy="12" r="3"></circle>
+                    <path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1-1.7 1.7-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.5V20h-2.4v-.2a1.7 1.7 0 0 0-1-1.5 1.7 1.7 0 0 0-1.9.3l-.1.1L8 17l.1-.1A1.7 1.7 0 0 0 8.4 15a1.7 1.7 0 0 0-1.5-1H6v-2.4h.9a1.7 1.7 0 0 0 1.5-1A1.7 1.7 0 0 0 8.1 9L8 8.9l1.7-1.7.1.1a1.7 1.7 0 0 0 1.9.3 1.7 1.7 0 0 0 1-1.5V6h2.4v.2a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.9-.3l.1-.1L20 9l-.1.1a1.7 1.7 0 0 0-.3 1.9 1.7 1.7 0 0 0 1.5 1h.2v2.4h-.2a1.7 1.7 0 0 0-1.7.6z"></path>
+                </svg>
             </button>
 
         </div>
@@ -286,32 +327,41 @@ function openProfile() {
 
             <div class="profile-banner">
 
-                <div class="profile-banner-glow"></div>
+                <div class="profile-banner-orb orb-one"></div>
+                <div class="profile-banner-orb orb-two"></div>
+                <div class="profile-banner-stars"></div>
 
             </div>
 
 
-            <div class="profile-main">
+            <div class="profile-user">
 
                 <div class="profile-avatar">
 
                     ${avatarHTML}
 
-                    <div class="profile-online"></div>
+                    <span class="profile-online"></span>
 
                 </div>
 
 
                 <div class="profile-user-info">
 
-                    <h1>
-                        ${fullName}
-                        <span class="verified-badge">
-                            ✓
-                        </span>
-                    </h1>
+                    <div class="profile-name-row">
 
-                    <p>
+                        <h1>
+                            ${fullName}
+                        </h1>
+
+                        <span class="verified-badge">
+                            <svg viewBox="0 0 24 24">
+                                <path d="M20 7l-11 11-5-5"></path>
+                            </svg>
+                        </span>
+
+                    </div>
+
+                    <p class="profile-username">
                         ${username}
                     </p>
 
@@ -328,7 +378,14 @@ function openProfile() {
                 class="edit-profile-button"
                 id="editProfileButton"
             >
-                ✎ &nbsp; Редактировать
+
+                <svg viewBox="0 0 24 24">
+                    <path d="M12 20h9"></path>
+                    <path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L8 18l-4 1 1-4z"></path>
+                </svg>
+
+                Редактировать
+
             </button>
 
         </section>
@@ -337,35 +394,18 @@ function openProfile() {
         <section class="profile-stats">
 
             <div class="profile-stat">
-
                 <strong>0</strong>
-
-                <span>
-                    Покупок
-                </span>
-
+                <span>Покупок</span>
             </div>
 
-
             <div class="profile-stat">
-
                 <strong>0</strong>
-
-                <span>
-                    Заказов
-                </span>
-
+                <span>Заказов</span>
             </div>
 
-
             <div class="profile-stat">
-
                 <strong>0</strong>
-
-                <span>
-                    Избранное
-                </span>
-
+                <span>Избранное</span>
             </div>
 
         </section>
@@ -410,24 +450,16 @@ function openProfile() {
 
                 <p class="profile-about">
                     Добро пожаловать в Game Market!
-                    Здесь появится информация
-                    о пользователе.
+                    Здесь будет отображаться информация
+                    о вашем профиле.
                 </p>
 
 
                 <div class="profile-tags">
 
-                    <span>
-                        🎮 Игры
-                    </span>
-
-                    <span>
-                        🛒 Покупки
-                    </span>
-
-                    <span>
-                        ⭐ Избранное
-                    </span>
+                    <span>Игры</span>
+                    <span>Покупки</span>
+                    <span>Избранное</span>
 
                 </div>
 
@@ -444,7 +476,12 @@ function openProfile() {
                 <div class="activity-empty">
 
                     <div class="activity-empty-icon">
-                        ◷
+
+                        <svg viewBox="0 0 24 24">
+                            <circle cx="12" cy="12" r="9"></circle>
+                            <path d="M12 7v5l3 2"></path>
+                        </svg>
+
                     </div>
 
                     <div>
@@ -454,8 +491,8 @@ function openProfile() {
                         </strong>
 
                         <p>
-                            Ваша активность появится
-                            после первых действий.
+                            Активность появится после
+                            первых действий в магазине.
                         </p>
 
                     </div>
@@ -478,7 +515,12 @@ function openProfile() {
                 >
 
                     <span class="setting-icon">
-                        ♧
+
+                        <svg viewBox="0 0 24 24">
+                            <path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"></path>
+                            <path d="M10 21h4"></path>
+                        </svg>
+
                     </span>
 
                     <span class="setting-text">
@@ -506,7 +548,14 @@ function openProfile() {
                 >
 
                     <span class="setting-icon">
-                        A
+
+                        <svg viewBox="0 0 24 24">
+                            <circle cx="12" cy="12" r="9"></circle>
+                            <path d="M3 12h18"></path>
+                            <path d="M12 3a14 14 0 0 1 0 18"></path>
+                            <path d="M12 3a14 14 0 0 0 0 18"></path>
+                        </svg>
+
                     </span>
 
                     <span class="setting-text">
@@ -534,7 +583,13 @@ function openProfile() {
                 >
 
                     <span class="setting-icon">
-                        ?
+
+                        <svg viewBox="0 0 24 24">
+                            <circle cx="12" cy="12" r="9"></circle>
+                            <path d="M9.5 9a2.5 2.5 0 1 1 4.4 1.6c-.9.9-1.9 1.2-1.9 2.4"></path>
+                            <path d="M12 17h.01"></path>
+                        </svg>
+
                     </span>
 
                     <span class="setting-text">
@@ -561,239 +616,305 @@ function openProfile() {
 
     `;
 
-    app.appendChild(profileScreen);
 
-    window.scrollTo({
-        top: 0,
-        behavior: "smooth"
-    });
+    app.appendChild(profileScreen);
 
 
     /* =========================
-       BACK
+       НАЗАД
     ========================= */
 
     document
         .getElementById("profileBackButton")
-        .addEventListener(
-            "click",
-            () => {
+        .addEventListener("click", () => {
 
-                haptic("light");
+            haptic("light");
 
-                profileScreen.remove();
+            showHome();
 
-                showHome();
+            setActiveNav(
+                document.querySelector(".nav-item.active")
+            );
 
-                setActiveNav(
-                    document.querySelector(
-                        ".nav-item.active"
-                    )
-                );
-
-            }
-        );
+        });
 
 
     /* =========================
-       SETTINGS
+       НАСТРОЙКИ
     ========================= */
 
     document
         .getElementById("profileSettingsButton")
-        .addEventListener(
-            "click",
-            () => {
+        .addEventListener("click", () => {
 
-                haptic("light");
+            haptic("light");
 
-                alert(
-                    "⚙ Настройки\n\n" +
-                    "Здесь появятся настройки аккаунта."
-                );
+            alert(
+                "Настройки\n\n" +
+                "Здесь будут дополнительные настройки аккаунта."
+            );
 
-            }
-        );
+        });
 
 
     /* =========================
-       EDIT PROFILE
+       РЕДАКТИРОВАНИЕ
     ========================= */
 
     document
         .getElementById("editProfileButton")
-        .addEventListener(
-            "click",
-            () => {
+        .addEventListener("click", () => {
 
-                haptic("light");
+            haptic("light");
 
-                alert(
-                    "✎ Редактирование профиля\n\n" +
-                    "Позже здесь можно будет изменить " +
-                    "описание и другие данные."
-                );
+            alert(
+                "Редактирование профиля\n\n" +
+                "Позже здесь можно будет изменить информацию профиля."
+            );
 
-            }
-        );
+        });
 
 
     /* =========================
-       TABS
+       ВКЛАДКИ
     ========================= */
 
     const tabs =
-        profileScreen.querySelectorAll(
-            ".profile-tab"
-        );
+        profileScreen.querySelectorAll(".profile-tab");
 
     const content =
-        profileScreen.querySelector(
-            "#profileContent"
-        );
+        profileScreen.querySelector("#profileContent");
+
 
     tabs.forEach((tab) => {
 
-        tab.addEventListener(
-            "click",
-            () => {
+        tab.addEventListener("click", () => {
 
-                haptic("light");
+            haptic("light");
 
-                tabs.forEach((item) => {
-                    item.classList.remove("active");
-                });
+            tabs.forEach((item) => {
+                item.classList.remove("active");
+            });
 
-                tab.classList.add("active");
+            tab.classList.add("active");
 
-                const type =
-                    tab.dataset.tab;
+            const type =
+                tab.dataset.tab;
 
-                if (type === "profile") {
 
-                    location.reload();
+            if (type === "profile") {
 
-                }
+                content.innerHTML = `
 
-                if (type === "purchases") {
+                    <div class="profile-card">
 
-                    content.innerHTML = `
+                        <div class="profile-card-title">
+                            О себе
+                        </div>
 
-                        <div class="profile-card empty-page">
+                        <p class="profile-about">
+                            Добро пожаловать в Game Market!
+                            Здесь будет отображаться информация
+                            о вашем профиле.
+                        </p>
 
-                            <div class="empty-page-icon">
-                                ◫
+                        <div class="profile-tags">
+                            <span>Игры</span>
+                            <span>Покупки</span>
+                            <span>Избранное</span>
+                        </div>
+
+                    </div>
+
+                    <div class="profile-card">
+
+                        <div class="profile-card-title">
+                            Последняя активность
+                        </div>
+
+                        <div class="activity-empty">
+
+                            <div class="activity-empty-icon">
+
+                                <svg viewBox="0 0 24 24">
+                                    <circle cx="12" cy="12" r="9"></circle>
+                                    <path d="M12 7v5l3 2"></path>
+                                </svg>
+
                             </div>
 
-                            <h2>
-                                Покупок пока нет
-                            </h2>
+                            <div>
 
-                            <p>
-                                Здесь появятся ваши
-                                покупки из магазина.
-                            </p>
+                                <strong>
+                                    Пока здесь пусто
+                                </strong>
+
+                                <p>
+                                    Активность появится после
+                                    первых действий в магазине.
+                                </p>
+
+                            </div>
 
                         </div>
 
-                    `;
+                    </div>
 
-                }
+                    <div class="profile-card">
 
-                if (type === "favorites") {
+                        <div class="profile-card-title">
+                            Настройки
+                        </div>
 
-                    content.innerHTML = `
+                        <button class="profile-setting-row">
 
-                        <div class="profile-card empty-page">
+                            <span class="setting-icon">
+                                ⚙
+                            </span>
 
-                            <div class="empty-page-icon">
-                                ♡
-                            </div>
+                            <span class="setting-text">
 
-                            <h2>
-                                Избранное пусто
-                            </h2>
+                                <strong>
+                                    Настройки аккаунта
+                                </strong>
 
-                            <p>
-                                Добавляйте интересные товары
-                                в избранное.
-                            </p>
+                                <small>
+                                    Управление профилем
+                                </small>
+
+                            </span>
+
+                            <span class="setting-arrow">
+                                ›
+                            </span>
+
+                        </button>
+
+                    </div>
+
+                `;
+
+                return;
+            }
+
+
+            if (type === "purchases") {
+
+                content.innerHTML = `
+
+                    <div class="profile-card empty-page">
+
+                        <div class="empty-page-icon">
+
+                            <svg viewBox="0 0 24 24">
+                                <path d="M6 3h12l2 4H4z"></path>
+                                <path d="M5 7h14v13H5z"></path>
+                                <path d="M9 11h6"></path>
+                            </svg>
 
                         </div>
 
-                    `;
+                        <h2>
+                            Покупок пока нет
+                        </h2>
 
-                }
+                        <p>
+                            Здесь появятся товары,
+                            которые вы купите в магазине.
+                        </p>
+
+                    </div>
+
+                `;
+
+                return;
+            }
+
+
+            if (type === "favorites") {
+
+                content.innerHTML = `
+
+                    <div class="profile-card empty-page">
+
+                        <div class="empty-page-icon">
+
+                            <svg viewBox="0 0 24 24">
+                                <path d="M20.8 8.7c0 5.5-8.8 10.3-8.8 10.3S3.2 14.2 3.2 8.7A4.7 4.7 0 0 1 12 6.4a4.7 4.7 0 0 1 8.8 2.3z"></path>
+                            </svg>
+
+                        </div>
+
+                        <h2>
+                            Избранное пусто
+                        </h2>
+
+                        <p>
+                            Добавляйте понравившиеся
+                            товары в избранное.
+                        </p>
+
+                    </div>
+
+                `;
 
             }
-        );
+
+        });
 
     });
 
 
     /* =========================
-       SETTINGS ROWS
+       НАСТРОЙКИ
     ========================= */
 
     profileScreen
         .querySelectorAll(".profile-setting-row")
         .forEach((row) => {
 
-            row.addEventListener(
-                "click",
-                () => {
+            row.addEventListener("click", () => {
 
-                    haptic("light");
+                haptic("light");
 
-                    const setting =
-                        row.dataset.setting;
+                const setting =
+                    row.dataset.setting;
 
-                    if (
-                        setting ===
-                        "notifications"
-                    ) {
-
-                        alert(
-                            "🔔 Уведомления\n\n" +
-                            "Настройки уведомлений будут здесь."
-                        );
-
-                    }
-
-                    if (
-                        setting ===
-                        "language"
-                    ) {
-
-                        alert(
-                            "Язык\n\n" +
-                            "Сейчас выбран русский язык."
-                        );
-
-                    }
-
-                    if (
-                        setting ===
-                        "help"
-                    ) {
-
-                        alert(
-                            "Помощь\n\n" +
-                            "Здесь будет служба поддержки."
-                        );
-
-                    }
-
+                if (setting === "notifications") {
+                    alert(
+                        "Уведомления\n\n" +
+                        "Здесь будут настройки уведомлений."
+                    );
                 }
-            );
+
+                if (setting === "language") {
+                    alert(
+                        "Язык\n\n" +
+                        "Сейчас выбран русский язык."
+                    );
+                }
+
+                if (setting === "help") {
+                    alert(
+                        "Помощь\n\n" +
+                        "Здесь будет служба поддержки."
+                    );
+                }
+
+            });
 
         });
 
+
+    window.scrollTo({
+        top: 0,
+        behavior: "smooth"
+    });
 }
 
 
 /* =========================
-   PROFILE BUTTONS
+   ПРОФИЛЬ
 ========================= */
 
 profileButton.addEventListener(
@@ -808,7 +929,7 @@ profileNavButton.addEventListener(
 
 
 /* =========================
-   CATALOG
+   КАТАЛОГ
 ========================= */
 
 catalogButton.addEventListener(
@@ -819,24 +940,19 @@ catalogButton.addEventListener(
 
         setActiveNav(catalogButton);
 
-        const categoriesSection =
-            document.querySelector(".categories");
-
-        if (categoriesSection) {
-
-            categoriesSection.scrollIntoView({
+        document
+            .querySelector(".categories")
+            ?.scrollIntoView({
                 behavior: "smooth",
                 block: "start"
             });
-
-        }
 
     }
 );
 
 
 /* =========================
-   CART
+   КОРЗИНА
 ========================= */
 
 cartButton.addEventListener(
@@ -857,7 +973,7 @@ cartButton.addEventListener(
 
 
 /* =========================
-   ORDERS
+   ПОКУПКИ
 ========================= */
 
 ordersButton.addEventListener(
@@ -878,7 +994,7 @@ ordersButton.addEventListener(
 
 
 /* =========================
-   SEARCH
+   ПОИСК
 ========================= */
 
 searchInput.addEventListener(
@@ -898,7 +1014,8 @@ searchInput.addEventListener(
         products.forEach((product) => {
 
             const text =
-                product.innerText.toLowerCase();
+                product.innerText
+                    .toLowerCase();
 
             product.style.display =
                 text.includes(query)
@@ -912,7 +1029,7 @@ searchInput.addEventListener(
 
 
 /* =========================
-   BUY BUTTONS
+   КУПИТЬ
 ========================= */
 
 document
@@ -936,7 +1053,7 @@ document
 
 
 /* =========================
-   ALL CATEGORIES
+   ВСЕ КАТЕГОРИИ
 ========================= */
 
 allCategoriesButton.addEventListener(
@@ -959,7 +1076,7 @@ allCategoriesButton.addEventListener(
 
 
 /* =========================
-   ALL PRODUCTS
+   ВСЕ ТОВАРЫ
 ========================= */
 
 allProductsButton.addEventListener(
@@ -982,13 +1099,11 @@ allProductsButton.addEventListener(
 
 
 /* =========================
-   HOME
+   ГЛАВНАЯ
 ========================= */
 
 const homeButton =
-    document.querySelector(
-        ".nav-item.active"
-    );
+    document.querySelector(".nav-item.active");
 
 if (homeButton) {
 
@@ -998,9 +1113,9 @@ if (homeButton) {
 
             haptic("light");
 
-            showHome();
-
             setActiveNav(homeButton);
+
+            showHome();
 
         }
     );
